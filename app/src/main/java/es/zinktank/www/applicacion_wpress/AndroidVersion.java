@@ -17,7 +17,5 @@ public class AndroidVersion {
         return name;
     }
 
-    public String getApi() {
-        return api;
-    }
+    public String getApi() { return api; }
 }

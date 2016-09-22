@@ -8,6 +8,7 @@ import retrofit2.http.GET;
 
 public interface RequestInterface {
 
-    @GET("android/jsonandroid")
-    Call<JSONResponse> getJSON();
+    //Esta es la direccion donde esta la info JSON en la web
+    @GET("wp-json/wp/v2/posts")
+    Call<Posts> getJSON();
 }
