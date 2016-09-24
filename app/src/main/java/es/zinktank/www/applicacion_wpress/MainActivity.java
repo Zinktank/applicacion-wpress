@@ -1,15 +1,12 @@
 package es.zinktank.www.applicacion_wpress;
 
-import android.app.ListActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.Window;
-import android.widget.ArrayAdapter;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -17,7 +14,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MainActivity extends ListActivity implements Callback<StackOverflowQuestions> {
+public class MainActivity extends AppCompatActivity {
 
 
     private RecyclerView recyclerView;
@@ -28,26 +25,10 @@ public class MainActivity extends ListActivity implements Callback<StackOverflow
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-        requestWindowFeature(Window.FEATURE_PROGRESS);
-        ArrayAdapter<Question> arrayAdapter =
-                new ArrayAdapter<Question>(this,
-                        android.R.layout.simple_list_item_1,
-                        android.R.id.text1,
-                        new ArrayList<Question>());
-
-        setListAdapter(arrayAdapter);
-        setProgressBarIndeterminateVisibility(true);
-        setProgressBarVisibility(true);
+        setContentView(R.layout.content_main);
+        loadJSON();
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        return true;
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean loadJSON() {
     /*private void initViews(){
         recyclerView = (RecyclerView)findViewById(R.id.card_recycler_view);
         recyclerView.setHasFixedSize(true);
@@ -60,40 +41,33 @@ public class MainActivity extends ListActivity implements Callback<StackOverflow
 
             Retrofit retrofit = new Retrofit.Builder()
                     //Esta es la web
-                    .baseUrl("https://api.stackexchange.com")
+                    .baseUrl("https://demo.wp-api.org")
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
             //Carga la informacion JSON
             StackOverflowAPI request = retrofit.create(StackOverflowAPI.class);
             StackOverflowAPI StackOverflowAPI = retrofit.create(StackOverflowAPI.class);
 
-            Call<StackOverflowQuestions> call = StackOverflowAPI.loadQuestions("android");
-            //asynchronous call
+            Call<List<Post>> call = StackOverflowAPI.loadQuestions();
+            /*Call<Posts> call = new Call<Posts>;
+            call = RequestInterface.getJSON();*/
+                //asynchronous call
 
-            call.enqueue(new Callback<StackOverflowQuestions>() {
+            call.enqueue(new Callback<List<Post>>() {
                 @Override
-                public void onResponse(Call<StackOverflowQuestions> call, Response<StackOverflowQuestions> response) {
-                    setProgressBarIndeterminateVisibility(false);
-                    ArrayAdapter<Question> adapter = (ArrayAdapter<Question>) getListAdapter();
-                    adapter.clear();
-                    adapter.addAll(response.body().items);
+                public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+                    final TextView textView = (TextView) findViewById(R.id.textView);
+                    //adapter.addAll(response.body().items);
+                    textView.setText(response.body().get(1).toString());
                 }
 
                 @Override
-                public void onFailure(Call<StackOverflowQuestions> call, Throwable t) {
-                    Toast.makeText(MainActivity.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                public void onFailure(Call<List<Post>> call, Throwable t) {
+                    final TextView textView = (TextView) findViewById(R.id.textView);
+                    textView.setText("Something went wrong: " + t.getMessage());
                 }
             });
         return true;
     }
 
-    @Override
-    public void onResponse(Call<StackOverflowQuestions> call, Response<StackOverflowQuestions> response) {
-
-    }
-
-    @Override
-    public void onFailure(Call<StackOverflowQuestions> call, Throwable t) {
-
-    }
 }

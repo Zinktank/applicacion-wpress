@@ -96,7 +96,8 @@ public class Post {
      * @return
      *     The date
      */
-    public String getDate() {
+    @Override
+    public String toString() {
         return date;
     }
 
